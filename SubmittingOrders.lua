@@ -32,6 +32,7 @@ sendOrders = {}
 
 
 --- Начальное выставление параметров
+--- Эта функция инициализирует временные метки сессий и сбрасывает флаги состояния
 function Initialization()
   SetClientSetting()
 
@@ -60,6 +61,7 @@ end
 
 
 --- Определяем время запуска процесса выставления заявок.
+--- Функция проверяет текущее время и устанавливает соответствующие флаги сессий
 function SubmittingOrders()
   local timeCurrent = os.time()
 
@@ -81,8 +83,8 @@ function SubmittingOrders()
     IsSentOrders = false
   end
 
-  if (os.time(TimeEveningStart) < timeCurrent) and not IsEvningTime then
-    if eIsSentOrders then
+  if (os.time(TimeEveningStart) < timeCurrent) and not IsEveningTime then
+    if IsSentOrders then
       N_CloseAllOrder()
     end
     IsEveningTime = true
@@ -98,6 +100,7 @@ function SubmittingOrders()
 end
 
 --- Запускаем процесс выставления заявок.
+--- Функция управляет процессом отправки заявок в зависимости от текущей сессии
 function SubmittingOrdersRun()
 
   if (IsSendingOrders) then
@@ -169,6 +172,7 @@ function SubmittingOrdersRun()
 end
 
 ---Считываем заявки из файла.
+--- Функция загружает заявки из CSV-файла и создает объекты Order
 function LoadOrdersFromFile(fileName)
   local orders = {}
   local rows = getFromCSV(fileName)
@@ -216,6 +220,7 @@ function LoadOrdersFromFile(fileName)
 end
 
 --- Отправка заявок на биржу
+--- Функция отправляет заявки на биржу, проверяя наличие и корректность данных
 function SubmitOrders(orders)
   for i, order in pairs(orders) do
     --log.debug(i, order:FormatPrice(), order:FormatQuantity(), order.Print())
@@ -275,6 +280,7 @@ function IsSendOrder(order)
 end
 
 -- Выставляет заявку на продажу только что купленной по минимальной цене бумаге
+--- Функция создает и отправляет заявку на продажу бумаги, которая была только что куплена
 function TradeClosePosition(trade)
   local orders = {}
   local operation = "S"

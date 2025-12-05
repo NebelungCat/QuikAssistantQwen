@@ -11,6 +11,7 @@ math.round = function(num, idp)
 end
 
 --- Функция предназначена для получения информации по инструменту.
+--- Ищет информацию о ценной бумаге в различных классах инструментов
 ---@param securityCode string
 function GetSecurityInfo(securityCode)
   for classCode in string.gmatch("TQCB,TQBR,SPBXM,EQOB,TQIR,TQRD,TQOB,FQBR,TQTF,TQPI,MTQR,", "(%P*),") do
@@ -24,6 +25,7 @@ function GetSecurityInfo(securityCode)
 end
 
 --- Функция предназначена для получения информации по инструменту.
+--- Ищет информацию о ценной бумаге в различных классах инструментов, включая USD
 ---@param securityCode string
 function GetUsdSecurityInfo(securityCode)
   for classCode in string.gmatch("TQCB,TQBD,TQBR,SPBXM,EQOB,TQIR,TQRD,TQOB,TQTF,TQPI,MTQR,", "(%P*),") do
@@ -37,6 +39,7 @@ function GetUsdSecurityInfo(securityCode)
 end
 
 ---Заявка.
+--- Создает новый объект заявки с информацией о ценной бумаге
 ---@param securityCode string
 ---@return table
 function Order:new(securityCode)
@@ -58,7 +61,8 @@ function Order:new(securityCode)
     return nil
   end
   
-  -- Исключение инструмента из проверки на предельную доходность
+  -- Проверяет, является ли инструмент исключением из проверки на предельную доходность
+  -- Возвращает true, если инструмент находится в списке исключений
   function obj:IsExceptionFromLimitActuation()
     for securityCode in string.gmatch("ENPG,RTKM,MTSS,NKNCP,UPRO,MGTSP,IRAO,MAGN,TGKA,GAZP,AFLT,ELFV,SMLT,SNGS,ALRS,MGNT,HYDR,VTBR,FEES,MVID,SGZH,AQUA,STSB,IVAT,UPRO,VKCO,", "(%P*),") do
       if (obj.SecurityCode == securityCode) then
@@ -68,7 +72,7 @@ function Order:new(securityCode)
     return false  
   end
 
-  ---Это облигация.
+  ---Проверяет, является ли инструмент облигацией.
   ---@return boolean
   function obj:IsBond()
     for classCode in string.gmatch("TQCB,EQOB,TQIR,TQRD,TQOB,", "(%P*),") do
@@ -79,6 +83,8 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Проверяет, является ли инструмент ОФЗ.
+  ---@return boolean
   function obj:IsOFZ()
     if (obj.SecurityInfo.class_code == "TQOB") then
       return true
@@ -86,6 +92,8 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Проверяет, является ли инструмент ETF.
+  ---@return boolean
   function obj:IsEtf()
     if (obj.SecurityInfo.class_code == "TQTF") then
       return true
@@ -93,6 +101,8 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Проверяет, является ли инструмент инструментом СПБ биржи.
+  ---@return boolean
   function obj:IsSpb()
     if (obj.SecurityInfo.class_code == "SPBXM") then
       return true
@@ -100,6 +110,8 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Проверяет, является ли инструмент иностранным.
+  ---@return boolean
   function obj:IsForeign()
     if (obj.SecurityInfo.class_code == "SPBXM" or obj.SecurityInfo.class_code == "FQBR" or obj.SecurityInfo.class_code == "TQBD") then
       return true
@@ -107,6 +119,8 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Проверяет, является ли инструмент USD.
+  ---@return boolean
   function obj:IsUsd()
     if (obj.SecurityInfo.class_code == "SPBXM" or obj.SecurityInfo.class_code == "TQBD") then
       return true
@@ -114,6 +128,8 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Проверяет, является ли операция покупкой.
+  ---@return boolean
   function obj:IsBuy()
     if (obj.Operation ~= nil and obj.Operation == "B") then
       return true
@@ -121,6 +137,8 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Проверяет, является ли операция продажей.
+  ---@return boolean
   function obj:IsSell()
     if (obj.Operation ~= nil and obj.Operation == "S") then
       return true
@@ -128,12 +146,15 @@ function Order:new(securityCode)
     return false
   end
 
+  ---Очищает параметры заявки.
   function obj:Clear()
     obj.Operation = ""
     obj.Quantity = 0
     obj.Price = 0
   end
 
+  ---Форматирует цену с учетом точности инструмента.
+  ---@return string
   function obj:FormatPrice()
     return string.format("%." .. obj.SecurityInfo.scale .. "f", tonumber(obj.Price))
   end
