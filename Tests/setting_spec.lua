@@ -1,7 +1,7 @@
--- РўРµСЃС‚С‹ РґР»СЏ С„Р°Р№Р»Р° Setting
--- РР·РѕР»РёСЂСѓРµРј С‚РµСЃС‚С‹ РѕС‚ Р·Р°РІРёСЃРёРјРѕСЃС‚РµР№, С‡С‚РѕР±С‹ РёР·Р±РµР¶Р°С‚СЊ РѕС€РёР±РѕРє РїСЂРё Р·Р°РіСЂСѓР·РєРµ РґСЂСѓРіРёС… С„Р°Р№Р»РѕРІ
+-- Тесты для файла Setting
+-- Изолируем тесты от зависимостей, чтобы избежать ошибок при загрузке других файлов
 
--- РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РїРµСЂРµРјРµРЅРЅС‹Рµ, РєР°Рє РѕРЅРё РѕРїСЂРµРґРµР»РµРЅС‹ РІ Setting.lua
+-- Инициализируем переменные, как они определены в Setting.lua
 Broker = ""
 ClientCode = ""
 AccountCode = ""
@@ -24,7 +24,7 @@ FileBuyOrderBondsEdge = ""
 FileBuyOrderSpbEdge = ""
 FileBuyOrderRmUsdEdge = ""
 
--- Р¤СѓРЅРєС†РёРё РёР· Setting.lua, РєРѕС‚РѕСЂС‹Рµ РјС‹ Р±СѓРґРµРј С‚РµСЃС‚РёСЂРѕРІР°С‚СЊ
+-- Функции из Setting.lua, которые мы будем тестировать
 function SetSettingFinam()
   Broker = "FINAM"
   ClientCode = "0734A/0734A"
@@ -100,7 +100,7 @@ function SetClientSetting()
   local userId = getInfoParam("USERID")
   local problem = ""
   if (userId == nil or userId == "") then
-    problem = "ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РЅРµ РїРѕР»СѓС‡РµРЅРѕ"
+    problem = "ID пользователя не получено"
   end
 
   if (userId == "171783") then
@@ -129,7 +129,7 @@ function SetClientSetting()
 end
 
 describe("Setting tests", function()
-  -- РўРµСЃС‚ РЅР°С‡Р°Р»СЊРЅС‹С… Р·РЅР°С‡РµРЅРёР№ РїРµСЂРµРјРµРЅРЅС‹С…
+  -- Тест начальных значений переменных
   it("should have initial values", function()
     assert.are.equal("", Broker)
     assert.are.equal("", ClientCode)
@@ -142,7 +142,7 @@ describe("Setting tests", function()
     assert.are.equal(0, OFZVolumeOrderMax)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetSettingFinam
+  -- Тест функции SetSettingFinam
   it("should set Finam settings correctly", function()
     SetSettingFinam()
     
@@ -160,7 +160,7 @@ describe("Setting tests", function()
     assert.are.equal(100000, VolumeOrderLimit)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetSettingVTB
+  -- Тест функции SetSettingVTB
   it("should set VTB settings correctly", function()
     SetSettingVTB()
     
@@ -178,7 +178,7 @@ describe("Setting tests", function()
     assert.are.equal(50, LimitActuationOrderForeignEdge)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetSettingPSB
+  -- Тест функции SetSettingPSB
   it("should set PSB settings correctly", function()
     SetSettingPSB()
     
@@ -195,7 +195,7 @@ describe("Setting tests", function()
     assert.are.equal(100000, VolumeOrderLimit)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetSettingRSHB
+  -- Тест функции SetSettingRSHB
   it("should set RSHB settings correctly", function()
     SetSettingRSHB()
     
@@ -213,7 +213,7 @@ describe("Setting tests", function()
     assert.are.equal(50, LimitActuationOrderForeignEdge)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetSettingTest
+  -- Тест функции SetSettingTest
   it("should set Test settings correctly", function()
     SetSettingTest()
     
@@ -227,9 +227,9 @@ describe("Setting tests", function()
     assert.are.equal(7000, OFZVolumeOrderMax)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetClientSetting СЃ РјРѕРєРѕРј getInfoParam
+  -- Тест функции SetClientSetting с моком getInfoParam
   it("should set client settings based on user ID", function()
-    -- РњРѕРєР°РµРј getInfoParam РґР»СЏ РІРѕР·РІСЂР°С‚Р° ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ FINAM
+    -- Мокаем getInfoParam для возврата ID пользователя FINAM
     getInfoParam = function(param)
       if param == "USERID" then
         return "171783"
@@ -248,7 +248,7 @@ describe("Setting tests", function()
     assert.are.equal(50000, BondVolumeOrderMax)
     assert.are.equal(10000, OFZVolumeOrderMax)
     
-    -- РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РёРјРµРЅР° С„Р°Р№Р»РѕРІ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹ РїСЂР°РІРёР»СЊРЅРѕ
+    -- Проверяем, что имена файлов установлены правильно
     assert.are.equal("FINAM_BuyOrders.csv", FileBuyOrder)
     assert.are.equal("FINAM_SellOrders.csv", FileSellOrder)
     assert.are.equal("FINAM_BuyOrders_Edge.csv", FileBuyOrderEdge)
@@ -257,9 +257,9 @@ describe("Setting tests", function()
     assert.are.equal("FINAM_BuyOrders_RmUSD_Edge.csv", FileBuyOrderRmUsdEdge)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetClientSetting СЃ VTB ID
+  -- Тест функции SetClientSetting с VTB ID
   it("should set VTB client settings based on user ID", function()
-    -- РњРѕРєР°РµРј getInfoParam РґР»СЏ РІРѕР·РІСЂР°С‚Р° ID РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ VTB
+    -- Мокаем getInfoParam для возврата ID пользователя VTB
     getInfoParam = function(param)
       if param == "USERID" then
         return "49653"
@@ -279,7 +279,7 @@ describe("Setting tests", function()
     assert.are.equal(20000, BondVolumeOrderMax)
     assert.are.equal(15000, OFZVolumeOrderMax)
     
-    -- РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РёРјРµРЅР° С„Р°Р№Р»РѕРІ СѓСЃС‚Р°РЅРѕРІР»РµРЅС‹ РїСЂР°РІРёР»СЊРЅРѕ
+    -- Проверяем, что имена файлов установлены правильно
     assert.are.equal("VTB_BuyOrders.csv", FileBuyOrder)
     assert.are.equal("VTB_SellOrders.csv", FileSellOrder)
     assert.are.equal("VTB_BuyOrders_Edge.csv", FileBuyOrderEdge)
@@ -288,9 +288,9 @@ describe("Setting tests", function()
     assert.are.equal("VTB_BuyOrders_RmUSD_Edge.csv", FileBuyOrderRmUsdEdge)
   end)
 
-  -- РўРµСЃС‚ С„СѓРЅРєС†РёРё SetClientSetting СЃ РЅРµРёР·РІРµСЃС‚РЅС‹Рј ID
+  -- Тест функции SetClientSetting с неизвестным ID
   it("should set empty settings for unknown user ID", function()
-    -- РњРѕРєР°РµРј getInfoParam РґР»СЏ РІРѕР·РІСЂР°С‚Р° РЅРµРёР·РІРµСЃС‚РЅРѕРіРѕ ID
+    -- Мокаем getInfoParam для возврата неизвестного ID
     getInfoParam = function(param)
       if param == "USERID" then
         return "999999"

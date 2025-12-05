@@ -1,10 +1,10 @@
--- РўРµСЃС‚С‹ РґР»СЏ РєР»Р°СЃСЃР° Order
+-- Тесты для класса Order
 local Order = require("../Order")
 
 describe("Order tests", function()
-  -- РўРµСЃС‚ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ РѕР±СЉРµРєС‚Р° Order
+  -- Тест создания нового объекта Order
   it("should create a new Order object", function()
-    -- РЎРѕР·РґР°РµРј РјРѕРє-РѕР±СЉРµРєС‚ РґР»СЏ SecurityInfo, С‚Р°Рє РєР°Рє С„СѓРЅРєС†РёСЏ getSecurityInfo РЅРµ Р±СѓРґРµС‚ СЂР°Р±РѕС‚Р°С‚СЊ РІ С‚РµСЃС‚Рµ
+    -- Создаем мок-объект для SecurityInfo, так как функция getSecurityInfo не будет работать в тесте
     local mockSecurityInfo = {
       class_code = "TQBR",
       scale = 2,
@@ -13,7 +13,7 @@ describe("Order tests", function()
       face_value = 1000
     }
     
-    -- РњРѕРєР°РµРј С„СѓРЅРєС†РёСЋ GetSecurityInfo, С‡С‚РѕР±С‹ РѕРЅР° РІРѕР·РІСЂР°С‰Р°Р»Р° РЅР°С€ РјРѕРє
+    -- Мокаем функцию GetSecurityInfo, чтобы она возвращала наш мок
     _G.GetSecurityInfo = function(securityCode)
       return mockSecurityInfo
     end
@@ -34,10 +34,10 @@ describe("Order tests", function()
     assert.are.equal(0, order.Price)
   end)
 
-  -- РўРµСЃС‚ РїСЂРѕРІРµСЂРєРё, СЏРІР»СЏРµС‚СЃСЏ Р»Рё Р±СѓРјР°РіР° РѕР±Р»РёРіР°С†РёРµР№
+  -- Тест проверки, является ли бумага облигацией
   it("should identify if security is a bond", function()
     local mockSecurityInfo = {
-      class_code = "TQOB", -- РљР»Р°СЃСЃ РѕР±Р»РёРіР°С†РёР№
+      class_code = "TQOB", -- Класс облигаций
       scale = 2,
       min_price_step = 0.01,
       lot_size = 1,
@@ -61,10 +61,10 @@ describe("Order tests", function()
     assert.truthy(order:IsBond())
   end)
 
-  -- РўРµСЃС‚ РїСЂРѕРІРµСЂРєРё, СЏРІР»СЏРµС‚СЃСЏ Р»Рё Р±СѓРјР°РіР° ETF
+  -- Тест проверки, является ли бумага ETF
   it("should identify if security is an ETF", function()
     local mockSecurityInfo = {
-      class_code = "TQTF", -- РљР»Р°СЃСЃ ETF
+      class_code = "TQTF", -- Класс ETF
       scale = 2,
       min_price_step = 0.01,
       lot_size = 1,
@@ -88,10 +88,10 @@ describe("Order tests", function()
     assert.truthy(order:IsEtf())
   end)
 
-  -- РўРµСЃС‚ РїСЂРѕРІРµСЂРєРё, СЏРІР»СЏРµС‚СЃСЏ Р»Рё Р±СѓРјР°РіР° SPB РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРј
+  -- Тест проверки, является ли бумага SPB инструментом
   it("should identify if security is a SPB instrument", function()
     local mockSecurityInfo = {
-      class_code = "SPBXM", -- РљР»Р°СЃСЃ SPB
+      class_code = "SPBXM", -- Класс SPB
       scale = 2,
       min_price_step = 0.01,
       lot_size = 1,
@@ -115,7 +115,7 @@ describe("Order tests", function()
     assert.truthy(order:IsSpb())
   end)
 
-  -- РўРµСЃС‚ РїСЂРѕРІРµСЂРєРё РѕРїРµСЂР°С†РёРё РїРѕРєСѓРїРєРё
+  -- Тест проверки операции покупки
   it("should identify if operation is buy", function()
     local mockSecurityInfo = {
       class_code = "TQBR",
@@ -144,7 +144,7 @@ describe("Order tests", function()
     assert.falsy(order:IsSell())
   end)
 
-  -- РўРµСЃС‚ РїСЂРѕРІРµСЂРєРё РѕРїРµСЂР°С†РёРё РїСЂРѕРґР°Р¶Рё
+  -- Тест проверки операции продажи
   it("should identify if operation is sell", function()
     local mockSecurityInfo = {
       class_code = "TQBR",
@@ -173,11 +173,11 @@ describe("Order tests", function()
     assert.falsy(order:IsBuy())
   end)
 
-  -- РўРµСЃС‚ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёСЏ С†РµРЅС‹
+  -- Тест форматирования цены
   it("should format price correctly", function()
     local mockSecurityInfo = {
       class_code = "TQBR",
-      scale = 2, -- 2 Р·РЅР°РєР° РїРѕСЃР»Рµ Р·Р°РїСЏС‚РѕР№
+      scale = 2, -- 2 знака после запятой
       min_price_step = 0.01,
       lot_size = 1,
       face_value = 1000
@@ -201,7 +201,7 @@ describe("Order tests", function()
     assert.are.equal("250.79", order:FormatPrice())
   end)
 
-  -- РўРµСЃС‚ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР°
+  -- Тест форматирования количества
   it("should format quantity correctly", function()
     local mockSecurityInfo = {
       class_code = "TQBR",
@@ -232,7 +232,7 @@ describe("Order tests", function()
     assert.are.equal("16", order:FormatQuantity(0))
   end)
 
-  -- РўРµСЃС‚ СЂР°СЃС‡РµС‚Р° РѕР±СЉРµРјР° РґР»СЏ Р°РєС†РёР№
+  -- Тест расчета объема для акций
   it("should calculate volume for stocks correctly", function()
     local mockSecurityInfo = {
       class_code = "TQBR",
@@ -254,20 +254,20 @@ describe("Order tests", function()
     }
     
     local order = Order:new("SBER")
-    order:SetOperation("B", 250.0, 10) -- 10 Р»РѕС‚РѕРІ РїРѕ 250 СЂСѓР±Р»РµР№
+    order:SetOperation("B", 250.0, 10) -- 10 лотов по 250 рублей
     
     assert.truthy(order)
-    assert.are.equal(2500, order:GetVolume()) -- 10 Р»РѕС‚РѕРІ * 1 Р°РєС†РёСЏ РІ Р»РѕС‚Рµ * 250 СЂСѓР±Р»РµР№ = 2500
+    assert.are.equal(2500, order:GetVolume()) -- 10 лотов * 1 акция в лоте * 250 рублей = 2500
   end)
 
-  -- РўРµСЃС‚ СЂР°СЃС‡РµС‚Р° РѕР±СЉРµРјР° РґР»СЏ РѕР±Р»РёРіР°С†РёР№
+  -- Тест расчета объема для облигаций
   it("should calculate volume for bonds correctly", function()
     local mockSecurityInfo = {
       class_code = "TQOB",
       scale = 2,
       min_price_step = 0.01,
       lot_size = 1,
-      face_value = 1000 -- РЅРѕРјРёРЅР°Р» РѕР±Р»РёРіР°С†РёРё 1000
+      face_value = 1000 -- номинал облигации 1000
     }
     
     _G.GetSecurityInfo = function(securityCode)
@@ -282,13 +282,13 @@ describe("Order tests", function()
     }
     
     local order = Order:new("SU24019RMFS0")
-    order:SetOperation("B", 95.0, 5) -- 5 Р»РѕС‚РѕРІ РїРѕ 95% РѕС‚ РЅРѕРјРёРЅР°Р»Р°
+    order:SetOperation("B", 95.0, 5) -- 5 лотов по 95% от номинала
     
     assert.truthy(order)
-    assert.are.equal(4750, order:GetVolume()) -- 5 Р»РѕС‚РѕРІ * 1 РѕР±Р»РёРіР°С†РёСЏ РІ Р»РѕС‚Рµ * (95% * 1000 РЅРѕРјРёРЅР°Р») = 4750
+    assert.are.equal(4750, order:GetVolume()) -- 5 лотов * 1 облигация в лоте * (95% * 1000 номинал) = 4750
   end)
 
-  -- РўРµСЃС‚ РјРµС‚РѕРґР° SetOperation
+  -- Тест метода SetOperation
   it("should set operation, price and quantity correctly", function()
     local mockSecurityInfo = {
       class_code = "TQBR",
@@ -317,10 +317,10 @@ describe("Order tests", function()
     
     assert.are.equal("B", order.Operation)
     assert.are.equal(15, order.Quantity)
-    assert.are.equal(250.57, order.Price) -- С†РµРЅР° РѕРєСЂСѓРіР»РµРЅР° РґРѕ 2 Р·РЅР°РєРѕРІ РїРѕСЃР»Рµ Р·Р°РїСЏС‚РѕР№
+    assert.are.equal(250.57, order.Price) -- цена округлена до 2 знаков после запятой
   end)
 
-  -- РўРµСЃС‚ РїСЂРѕРІРµСЂРєРё РёСЃРєР»СЋС‡РµРЅРёСЏ РёР· Р»РёРјРёС‚Р° РґРѕС…РѕРґРЅРѕСЃС‚Рё
+  -- Тест проверки исключения из лимита доходности
   it("should identify if security is exception from limit actuation", function()
     local mockSecurityInfo = {
       class_code = "TQBR",

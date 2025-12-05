@@ -1,5 +1,5 @@
 -- Класс ордера
-local Order = {}
+Order = {}
 
 -- (дополняет библиотеку math)
 math.round = function(num, idp)

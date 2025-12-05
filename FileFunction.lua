@@ -10,8 +10,8 @@ local csv = require("csv")
 
 function getFromCSV(nameFileCSV)
   local result = {}
-  --local path = getScriptPath().. "//Data//" .. nameFileCSV;
-  local path = "c://Users//Nebelung//Documents//QuikAssistant//Data//" .. nameFileCSV
+  local path = getScriptPath().. "//Data//" .. nameFileCSV;
+  --local path = "c://Users//Nebelung//Documents//QuikAssistant//Data//" .. nameFileCSV
   local fileCSV = csv.open(path)
 
   if fileCSV ~= nil then
